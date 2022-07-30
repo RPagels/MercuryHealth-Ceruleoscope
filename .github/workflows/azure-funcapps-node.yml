@@ -27,7 +27,10 @@ env:
   AZURE_WEBAPP_NAME: your-app-name    # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '14.x'                # set this to the node version to use
-
+  Azure_Resource_GroupName: 'rg-MercuryHealth-Ceruleoscope'
+  Azure_Resource_GroupLocation: 'eastus2'
+  azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+  
 permissions:
   contents: read
 
@@ -55,11 +58,78 @@ jobs:
         name: node-app
         path: .
 
-  deploy:
+    - name: Upload Infrastucture Files
+      if: ${{ github.event_name != 'pull_request' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: IaC
+        path: ${{ github.workspace }}/IaC/*.*
+
+  deploy_infrastructure:
+    runs-on: ubuntu-latest
+    outputs:
+      output_functionAppName: ${{ steps.Infra.outputs.out_functionAppName }}
+      
+    steps:
+    - name: Login to Azure
+      uses: azure/login@v1
+      continue-on-error: false
+      with:
+        creds: ${{ secrets.azure-credentials }}
+
+    - name: Ensure Resource Group Exists
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          #!/bin/bash
+          az group create --name ${{ env.Azure_Resource_GroupName }} --location ${{ inputs.resource-group-location }}
+    - name: Ensure Resource Group is UnLocked
+      #if: contains(github.event_name, 'push')
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
+
+    - name: Download Build Artifact-Infrastructure
+      uses: actions/download-artifact@v2
+      continue-on-error: false
+      with:
+        name: IaC
+        path: ${{ github.workspace }}/IaC
+
+    - name: Install Bicep
+      run: |
+        curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+        chmod +x ./bicep
+        sudo mv ./bicep /usr/local/bin/bicep
+        bicep --version
+
+    - name: Infrastructure
+      id: Infra
+      uses: azure/arm-deploy@v1
+      continue-on-error: false
+      with:
+        resourceGroupName: ${{ env.Azure_Resource_GroupName }}
+        template: ./IaC/main-1.bicep
+        #parameters: ./IaC/main-1.params.json Deployed_Environment=${{ env.Deployed_Environment }}
+        deploymentMode: Incremental
+        failOnStdErr: false
+
+    - name: Ensure Resource Group is Locked
+      #if: contains(github.event_name, 'push')
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
+
+  deploy_app:
     permissions:
       contents: none
     runs-on: ubuntu-latest
-    needs: build
+    needs: deploy_infrastructure
     environment:
       name: 'Development'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -70,10 +140,39 @@ jobs:
       with:
         name: node-app
 
-    - name: 'Deploy to Azure WebApp'
-      id: deploy-to-webapp 
-      uses: azure/webapps-deploy@v2
+    - name: Login to Azure
+      uses: azure/login@v1
+      continue-on-error: false
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        creds: ${{ secrets.azure-credentials }}
+
+    - name: Ensure Resource Group is UnLocked
+      #if: contains(github.event_name, 'push')
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
+
+    - name: Download Build Artifacts-Function Application
+      uses: actions/download-artifact@v2
+      continue-on-error: false
+      with:
+        name: MercuryHealth.FunctionApp
+        path: ${{ github.workspace }}/MercuryHealth.FunctionApp
+
+    # Deploy Function Application
+    - name: 'Deploy Function Application'
+      uses: Azure/functions-action@v1
+      with:
+        app-name: ${{ needs.deploy_infrastructure.outputs.output_functionAppName }}
+        slot-name: 'production'
+        package: './FunctionApp'
+        
+#    - name: 'Deploy to Azure WebApp'
+#      id: deploy-to-webapp 
+#      uses: azure/webapps-deploy@v2
+#      with:
+#        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+#        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+#        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
