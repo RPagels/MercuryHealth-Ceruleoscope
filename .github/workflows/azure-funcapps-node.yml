@@ -59,12 +59,12 @@ jobs:
         name: node-app
         path: .
 
-      - name: Upload Build Artifacts-FunctionApp
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: FunctionApp
-          path: ${{ github.workspace }}/functionapp
+    - name: Upload Build Artifacts-FunctionApp
+      if: ${{ github.event_name != 'pull_request' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: FunctionApp
+        path: ${{ github.workspace }}/functionapp
 
     - name: Upload Infrastucture Files
       if: ${{ github.event_name != 'pull_request' }}
