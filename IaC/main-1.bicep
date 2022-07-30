@@ -1,18 +1,18 @@
-param subscriptionId string
-param name string
-param location string
-param hostingPlanName string
-param serverFarmResourceGroup string
-param alwaysOn bool
-param use32BitWorkerProcess bool
-param ftpsState string
-param storageAccountName string
-param linuxFxVersion string
-param sku string
-param skuCode string
-param workerSize string
-param workerSizeId string
-param numberOfWorkers string
+param subscriptionId string = 'f5e66d29-1a7f-4ee3-822e-74f644d3e665'
+param name string = 'func-mercuryhealth-ceruleoscope'
+param location string = 'East US 2'
+param hostingPlanName string = 'SP-funcmercuryhealthceruleoscopegr-ae2d'
+param serverFarmResourceGroup string = 'func-mercuryhealth-ceruleoscope_group'
+//param alwaysOn bool = false
+//param use32BitWorkerProcess bool
+param ftpsState string = 'FtpsOnly'
+param storageAccountName string = 'funcmercuryhealthceb54f'
+param linuxFxVersion string = 'Node|16'
+param sku string = 'Dynamic'
+param skuCode string = 'Y1'
+param workerSize string ='0'
+param workerSizeId string = '0'
+param numberOfWorkers string = '1'
 
 resource name_resource 'Microsoft.Web/sites@2018-11-01' = {
   name: name
