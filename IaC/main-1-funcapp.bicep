@@ -8,9 +8,9 @@ param appInsightsConnectionString string
 param defaultTags object
 
 param ftpsState string = 'FtpsOnly'
-param linuxFxVersion string = 'node|16'
-param sku string = 'Dynamic'
-param skuCode string = 'Y1'
+param linuxFxVersion string = 'node|16' // node|14-lts
+param sku string = 'F1'
+//param skuCode string = 'Y1'
 param functionRuntime string = 'node'
 param functionExtensionVersion string = '~4'
 
@@ -41,51 +41,34 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
   }
 }
 
-// // Blob Services for Storage Account
-// resource blobServices 'Microsoft.Storage/storageAccounts/blobServices@2021-09-01' = {
-//   parent: storageAccount
-//   name: 'default'
-//   properties: {
-//     cors: {
-//       corsRules: []
-//     }
-//     deleteRetentionPolicy: {
-//       enabled: true
-//       days: 7
-//     }
-//   }
-// }
-
 // App Service
-resource appService 'Microsoft.Web/serverfarms@2022-03-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: functionAppServiceName
   location: location
   kind: 'linux'
   tags: defaultTags
   sku: {
-    name: skuCode
-    tier: sku
-    size: skuCode
-    family: 'Y'
-    capacity: 0
+    name: sku
+    // family: 'Y'
+    // capacity: 0
   }
-  properties: {
-    perSiteScaling: false
-    maximumElasticWorkerCount: 1
-    isSpot: false
-    reserved: false
-    isXenon: false
-    hyperV: false
-    targetWorkerCount: 0
-    targetWorkerSizeId: 0
-  }
+  // properties: {
+  //   perSiteScaling: false
+  //   maximumElasticWorkerCount: 1
+  //   isSpot: false
+  //   reserved: false
+  //   isXenon: false
+  //   hyperV: false
+  //   targetWorkerCount: 0
+  //   targetWorkerSizeId: 0
+  // }
 }
 
 // Function App
 resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
   name: functionAppName
   location: location
-  kind: 'functionapp,linux'
+  //kind: 'functionapp,linux'
   tags: defaultTags
   properties: {
     enabled: true
@@ -101,10 +84,10 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
         hostType: 'Standard'
       }
     ]
-    serverFarmId: appService.id
-    reserved: false
-    isXenon: false
-    hyperV: false
+    serverFarmId: appServicePlan.id
+    // reserved: false
+    // isXenon: false
+    // hyperV: false
     siteConfig: {
       appSettings: [
         {
@@ -136,17 +119,17 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
           value: functionExtensionVersion
         }
       ]
-      numberOfWorkers: 1
+      //numberOfWorkers: 1
       linuxFxVersion: linuxFxVersion
-      ftpsState: ftpsState
+      //ftpsState: ftpsState
     }
-    scmSiteAlsoStopped: false
-    clientAffinityEnabled: false
-    clientCertEnabled: false
-    hostNamesDisabled: false
-    dailyMemoryTimeQuota: 0
+    // scmSiteAlsoStopped: false
+    // clientAffinityEnabled: false
+    // clientCertEnabled: false
+    // hostNamesDisabled: false
+    // dailyMemoryTimeQuota: 0
     httpsOnly: true
-    redundancyMode: 'None'
+    //redundancyMode: 'None'
   }
   // identity: {
   //   type:'SystemAssigned'
