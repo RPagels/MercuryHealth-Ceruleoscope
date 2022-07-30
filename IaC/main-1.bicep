@@ -11,29 +11,29 @@ var appInsightsName = 'appi-${uniqueString(resourceGroup().id)}'
 var appInsightsWorkspaceName = 'appw-${uniqueString(resourceGroup().id)}'
 var functionAppName = 'func-${uniqueString(resourceGroup().id)}'
 var functionAppServiceName = 'funcplan-${uniqueString(resourceGroup().id)}'
+var appInsightsAlertName = 'ResponseTime-${uniqueString(resourceGroup().id)}'
 
 // Tags
 var defaultTags = {
-  'App': 'Mercury Health Ceruleoscope'
-  'CostCenter': costCenter
-  'CreatedBy': createdBy
+  App: 'Mercury Health Ceruleoscope'
+  CostCenter: costCenter
+  CreatedBy: createdBy
 }
 
 // Create Application Insights
-module x ''
-module appinsightsmod './main-1-appinsights.bicep' = {
+module appinsightsmod 'main-1-appinsights.bicep' = {
   name: 'appinsightsdeploy'
   params: {
     location: location
     appInsightsName: appInsightsName
     defaultTags: defaultTags
-    //appInsightsAlertName: appInsightsAlertName
+    appInsightsAlertName: appInsightsAlertName
     appInsightsWorkspaceName: appInsightsWorkspaceName
   }
 }
 
 // Create Function App
-module functionappmod './main-1-funcapp.bicep' = {
+module functionappmod 'main-1-funcapp.bicep' = {
   name: 'functionappdeploy'
   params: {
     location: location
