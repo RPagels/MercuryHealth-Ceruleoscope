@@ -8,7 +8,7 @@ param appInsightsConnectionString string
 param defaultTags object
 
 param ftpsState string = 'FtpsOnly'
-param linuxFxVersion string = 'Node:16'
+param linuxFxVersion string = 'node|16'
 param sku string = 'Dynamic'
 param skuCode string = 'Y1'
 param functionRuntime string = 'node'
@@ -60,7 +60,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
 resource appService 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: functionAppServiceName
   location: location
-  kind: 'functionapp'
+  kind: 'linux'
   tags: defaultTags
   sku: {
     name: skuCode
