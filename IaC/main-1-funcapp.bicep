@@ -57,10 +57,10 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
 // }
 
 // App Service
-resource appService 'Microsoft.Web/serverfarms@2021-03-01' = {
+resource appService 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: functionAppServiceName
   location: location
-  kind: 'linux'
+  kind: 'functionapp'
   tags: defaultTags
   sku: {
     name: skuCode
@@ -82,7 +82,7 @@ resource appService 'Microsoft.Web/serverfarms@2021-03-01' = {
 }
 
 // Function App
-resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
+resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
   name: functionAppName
   location: location
   kind: 'functionapp,linux'
