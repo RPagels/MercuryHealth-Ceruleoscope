@@ -30,7 +30,6 @@ env:
   NODE_VERSION: '14.x'                # set this to the node version to use
   Azure_Resource_GroupName: 'rg-MercuryHealth-Ceruleoscope'
   Azure_Resource_GroupLocation: 'eastus2'
-  azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
   
 permissions:
   contents: read
@@ -84,7 +83,7 @@ jobs:
       uses: azure/login@v1
       continue-on-error: false
       with:
-        creds: ${{ secrets.azure-credentials }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Ensure Resource Group Exists
       uses: Azure/CLI@v1
@@ -153,7 +152,7 @@ jobs:
       uses: azure/login@v1
       continue-on-error: false
       with:
-        creds: ${{ secrets.azure-credentials }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Ensure Resource Group is UnLocked
       #if: contains(github.event_name, 'push')
