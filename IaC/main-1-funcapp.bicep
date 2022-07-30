@@ -8,7 +8,7 @@ param appInsightsConnectionString string
 param defaultTags object
 
 param ftpsState string = 'FtpsOnly'
-param linuxFxVersion string = 'Node|16'
+param linuxFxVersion string = 'Node:16'
 param sku string = 'Dynamic'
 param skuCode string = 'Y1'
 param functionRuntime string = 'node'
@@ -136,6 +136,7 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
           value: functionExtensionVersion
         }
       ]
+      numberOfWorkers: 1
       linuxFxVersion: linuxFxVersion
       ftpsState: ftpsState
     }

@@ -91,7 +91,8 @@ jobs:
       with:
         inlineScript: |
           #!/bin/bash
-          az group create --name ${{ env.Azure_Resource_GroupName }} --location ${{ inputs.resource-group-location }}
+          az group create --name ${{ env.Azure_Resource_GroupName }} --location ${{ env.Azure_Resource_GroupLocation }}
+
     - name: Ensure Resource Group is UnLocked
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
@@ -114,7 +115,7 @@ jobs:
         sudo mv ./bicep /usr/local/bin/bicep
         bicep --version
 
-    - name: Infrastructure
+    - name: Deploy Infrastructure
       id: Infra
       uses: azure/arm-deploy@v1
       continue-on-error: false
@@ -184,3 +185,11 @@ jobs:
 #        app-name: ${{ env.AZURE_WEBAPP_NAME }}
 #        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
 #        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+    - name: Ensure Resource Group is Locked
+      #if: contains(github.event_name, 'push')
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'

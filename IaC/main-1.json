@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.8.9.13224",
-      "templateHash": "11221278270118103567"
+      "templateHash": "16807045882901995365"
     }
   },
   "parameters": {
@@ -227,7 +227,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.8.9.13224",
-              "templateHash": "4755230800479438309"
+              "templateHash": "10213373807169637262"
             }
           },
           "parameters": {
@@ -256,7 +256,7 @@
             },
             "linuxFxVersion": {
               "type": "string",
-              "defaultValue": "Node|16"
+              "defaultValue": "Node:16"
             },
             "sku": {
               "type": "string",
@@ -377,6 +377,7 @@
                       "value": "[parameters('functionExtensionVersion')]"
                     }
                   ],
+                  "numberOfWorkers": 1,
                   "linuxFxVersion": "[parameters('linuxFxVersion')]",
                   "ftpsState": "[parameters('ftpsState')]"
                 },
@@ -400,5 +401,11 @@
         "[resourceId('Microsoft.Resources/deployments', 'appinsightsdeploy')]"
       ]
     }
-  ]
+  ],
+  "outputs": {
+    "out_functionAppName": {
+      "type": "string",
+      "value": "[variables('functionAppName')]"
+    }
+  }
 }
