@@ -10,7 +10,7 @@ param costCenter string = '74f644d3e665'
 var appInsightsName = 'appi-${uniqueString(resourceGroup().id)}'
 var appInsightsWorkspaceName = 'appw-${uniqueString(resourceGroup().id)}'
 var functionAppName = 'func-${uniqueString(resourceGroup().id)}'
-var functionAppServiceName = 'funcplan-${uniqueString(resourceGroup().id)}'
+var functionAppServicePlanName = 'funcplanLinux-${uniqueString(resourceGroup().id)}'
 var appInsightsAlertName = 'ResponseTime-${uniqueString(resourceGroup().id)}'
 
 // Tags
@@ -37,7 +37,7 @@ module functionappmod 'main-1-funcapp.bicep' = {
   name: 'functionappdeploy'
   params: {
     location: location
-    functionAppServiceName: functionAppServiceName
+    functionAppServicePlanName: functionAppServicePlanName
     functionAppName: functionAppName
     defaultTags: defaultTags
     appInsightsInstrumentationKey: appinsightsmod.outputs.out_appInsightsInstrumentationKey

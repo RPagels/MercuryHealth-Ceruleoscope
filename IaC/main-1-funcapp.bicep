@@ -2,13 +2,13 @@
 // a consumption plan, along with a storage account
 param location string = resourceGroup().location
 param functionAppName string
-param functionAppServiceName string
+param functionAppServicePlanName string
 param appInsightsInstrumentationKey string
 param appInsightsConnectionString string
 param defaultTags object
 
-param ftpsState string = 'FtpsOnly'
-param linuxFxVersion string = 'node|16' // node|14-lts
+//param ftpsState string = 'FtpsOnly'
+param linuxFxVersion string = 'node|14-lts'
 param sku string = 'F1'
 //param skuCode string = 'Y1'
 param functionRuntime string = 'node'
@@ -43,7 +43,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
 
 // App Service
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
-  name: functionAppServiceName
+  name: functionAppServicePlanName
   location: location
   kind: 'linux'
   tags: defaultTags
