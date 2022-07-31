@@ -2,6 +2,7 @@
   "name": "mercuryhealth-ceruleoscope",
   "version": "1.0.0",
   "description": "",
+  "homepage": "./",
   "scripts": {
     "start": "func start",
     "test": "echo \"No tests yet...\""
