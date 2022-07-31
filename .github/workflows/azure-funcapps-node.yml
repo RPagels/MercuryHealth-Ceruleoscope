@@ -139,7 +139,7 @@ jobs:
     needs: deploy_infrastructure
     environment:
       name: 'Development'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      url: ${{ steps.deploy_infrastructure.outputs.output_functionAppName }}
 
     steps:
     # - name: Download artifact from build job
