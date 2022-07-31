@@ -8,7 +8,7 @@ param appInsightsConnectionString string
 param defaultTags object
 
 //param ftpsState string = 'FtpsOnly'
-param linuxFxVersion string = 'node|14-lts'
+param linuxFxVersion string = 'NODE|10.15'
 param sku string = 'F1'
 //param skuCode string = 'Y1'
 param functionRuntime string = 'node'
@@ -52,89 +52,90 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
     // family: 'Y'
     // capacity: 0
   }
-  // properties: {
-  //   perSiteScaling: false
-  //   maximumElasticWorkerCount: 1
-  //   isSpot: false
-  //   reserved: false
-  //   isXenon: false
-  //   hyperV: false
-  //   targetWorkerCount: 0
-  //   targetWorkerSizeId: 0
-  // }
 }
 
-// Function App
-resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
+resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: functionAppName
   location: location
-  //kind: 'functionapp,linux'
-  tags: defaultTags
   properties: {
-    enabled: true
-    hostNameSslStates: [
-      {
-        name: '${functionAppName}.azurewebsites.net'
-        sslState: 'Disabled'
-        hostType: 'Standard'
-      }
-      {
-        name: '${functionAppName}.scm.azurewebsites.net'
-        sslState: 'Disabled'
-        hostType: 'Standard'
-      }
-    ]
     serverFarmId: appServicePlan.id
-    // reserved: false
-    // isXenon: false
-    // hyperV: false
     siteConfig: {
-      appSettings: [
-        {
-          name: 'PLAYWRIGHT_BROWSERS_PATH'
-          value: 'home/site/wwwroot/node_modules/playwright-chromium/.local-browsers/'
-        }
-        {
-          name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
-        }
-        {
-          name: 'WebsiteContentAzureFileConnectionString'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
-        }
-        {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: appInsightsInstrumentationKey
-        }
-        {
-          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-          value: appInsightsConnectionString //'InstrumentationKey=${appInsightsInstrumentationKey}'
-        }
-        {
-          name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: functionRuntime
-        }
-        {
-          name: 'FUNCTIONS_EXTENSION_VERSION'
-          value: functionExtensionVersion
-        }
-      ]
-      //numberOfWorkers: 1
       linuxFxVersion: linuxFxVersion
-      //ftpsState: ftpsState
     }
-    // scmSiteAlsoStopped: false
-    // clientAffinityEnabled: false
-    // clientCertEnabled: false
-    // hostNamesDisabled: false
-    // dailyMemoryTimeQuota: 0
-    httpsOnly: true
-    //redundancyMode: 'None'
   }
-  // identity: {
-  //   type:'SystemAssigned'
-  // }
 }
+
+// // Function App
+// resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
+//   name: functionAppName
+//   location: location
+//   //kind: 'functionapp,linux'
+//   tags: defaultTags
+//   properties: {
+//     enabled: true
+//     hostNameSslStates: [
+//       {
+//         name: '${functionAppName}.azurewebsites.net'
+//         sslState: 'Disabled'
+//         hostType: 'Standard'
+//       }
+//       {
+//         name: '${functionAppName}.scm.azurewebsites.net'
+//         sslState: 'Disabled'
+//         hostType: 'Standard'
+//       }
+//     ]
+//     serverFarmId: appServicePlan.id
+//     // reserved: false
+//     // isXenon: false
+//     // hyperV: false
+//     siteConfig: {
+//       appSettings: [
+//         {
+//           name: 'PLAYWRIGHT_BROWSERS_PATH'
+//           value: 'home/site/wwwroot/node_modules/playwright-chromium/.local-browsers/'
+//         }
+//         {
+//           name: 'AzureWebJobsStorage'
+//           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
+//         }
+//         {
+//           name: 'WebsiteContentAzureFileConnectionString'
+//           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
+//         }
+//         {
+//           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+//           value: appInsightsInstrumentationKey
+//         }
+//         {
+//           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+//           value: appInsightsConnectionString //'InstrumentationKey=${appInsightsInstrumentationKey}'
+//         }
+//         {
+//           name: 'FUNCTIONS_WORKER_RUNTIME'
+//           value: functionRuntime
+//         }
+//         {
+//           name: 'FUNCTIONS_EXTENSION_VERSION'
+//           value: functionExtensionVersion
+//         }
+//       ]
+//       //numberOfWorkers: 1
+//       linuxFxVersion: linuxFxVersion
+//       //ftpsState: ftpsState
+//     }
+//     // scmSiteAlsoStopped: false
+//     // clientAffinityEnabled: false
+//     // clientCertEnabled: false
+//     // hostNamesDisabled: false
+//     // dailyMemoryTimeQuota: 0
+//     httpsOnly: true
+//     //redundancyMode: 'None'
+//   }
+//   // identity: {
+//   //   type:'SystemAssigned'
+//   // }
+// }
 
 // Function App Config
 // resource functionAppConfig 'Microsoft.Web/sites/config@2021-03-01' = {
