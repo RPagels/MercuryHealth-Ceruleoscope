@@ -14,13 +14,6 @@ param sku string = 'B1'
 param functionRuntime string = 'node'
 param functionExtensionVersion string = '~4'
 
-// param workerSize string ='0'
-// param workerSizeId string = '0'
-// param numberOfWorkers string = '1'
-
-//param appInsightsInstrumentationKey string
-//var appInsightsName = '${appNamePrefix}-appinsights'
-
 // remove dashes for storage account name
 var storageAccountName = 'sta${uniqueString(resourceGroup().id)}'
 
@@ -41,7 +34,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
   }
 }
 
-// App Service
+// App Service Plan
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: functionAppServicePlanName
   location: location
@@ -55,7 +48,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   }
 }
 
-// This works great!!!
+// Function App
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: functionAppName
   location: location
@@ -107,78 +100,6 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   }
   
 }
-
-// // Function App
-// resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
-//   name: functionAppName
-//   location: location
-//   //kind: 'functionapp,linux'
-//   tags: defaultTags
-//   properties: {
-//     enabled: true
-//     hostNameSslStates: [
-//       {
-//         name: '${functionAppName}.azurewebsites.net'
-//         sslState: 'Disabled'
-//         hostType: 'Standard'
-//       }
-//       {
-//         name: '${functionAppName}.scm.azurewebsites.net'
-//         sslState: 'Disabled'
-//         hostType: 'Standard'
-//       }
-//     ]
-//     serverFarmId: appServicePlan.id
-//     // reserved: false
-//     // isXenon: false
-//     // hyperV: false
-//     siteConfig: {
-//       appSettings: [
-//         {
-//           name: 'PLAYWRIGHT_BROWSERS_PATH'
-//           value: 'home/site/wwwroot/node_modules/playwright-chromium/.local-browsers/'
-//         }
-//         {
-//           name: 'AzureWebJobsStorage'
-//           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
-//         }
-//         {
-//           name: 'WebsiteContentAzureFileConnectionString'
-//           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
-//         }
-//         {
-//           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-//           value: appInsightsInstrumentationKey
-//         }
-//         {
-//           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-//           value: appInsightsConnectionString //'InstrumentationKey=${appInsightsInstrumentationKey}'
-//         }
-//         {
-//           name: 'FUNCTIONS_WORKER_RUNTIME'
-//           value: functionRuntime
-//         }
-//         {
-//           name: 'FUNCTIONS_EXTENSION_VERSION'
-//           value: functionExtensionVersion
-//         }
-//       ]
-//       //numberOfWorkers: 1
-//       linuxFxVersion: linuxFxVersion
-//       //ftpsState: ftpsState
-//     }
-//     // scmSiteAlsoStopped: false
-//     // clientAffinityEnabled: false
-//     // clientCertEnabled: false
-//     // hostNamesDisabled: false
-//     // dailyMemoryTimeQuota: 0
-//     httpsOnly: true
-//     //redundancyMode: 'None'
-//   }
-//   // identity: {
-//   //   type:'SystemAssigned'
-//   // }
-// }
 
 // Function App Config
 // resource functionAppConfig 'Microsoft.Web/sites/config@2021-03-01' = {
@@ -257,48 +178,3 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
 //   }
 // }
 
-// // Function App Binding
-// resource functionAppBinding 'Microsoft.Web/sites/hostNameBindings@2021-03-01' = {
-//   parent: functionApp
-//   name: '${functionApp.name}.azurewebsites.net'
-//   properties: {
-//     siteName: functionApp.name
-//     hostNameType: 'Verified'
-//   }
-// }
-
-// resource functionAppServiceAppSettings 'Microsoft.Web/sites/siteextensions@2021-03-01' = {
-//   parent: functionApp
-//   name: 'Microsoft.ApplicationInsights.AzureWebSites'
-// }
-
-// Reference Existing resource
-// resource existingkeyvault 'Microsoft.KeyVault/vaults@2021-11-01-preview' existing = {
-//   name: keyvaultName
-// }
-
-//var secretAzureWebJobsStorage = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
-
-// create secret
-// resource mySecret3 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
-//   name: '${keyvaultName}/${secretName3}'
-//   //parent: existingkeyvault
-//   properties: {
-//     contentType: 'text/plain'
-//     //value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
-//     value: secretAzureWebJobsStorage
-//   }
-// }
-// create secret
-// resource mySecret4 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
-//   name: '${keyvaultName}/${secretName4}'
-//   //parent: existingkeyvault
-//   properties: {
-//     contentType: 'text/plain'
-//     //value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
-//     value: secretAzureWebJobsStorage
-//   }
-// }
-
-// output out_funcAppServiceprincipalId string = functionApp.identity.principalId
-// output out_AzureWebJobsStorage string = secretAzureWebJobsStorage
