@@ -62,8 +62,8 @@ jobs:
       if: ${{ github.event_name != 'pull_request' }}
       uses: actions/upload-artifact@v3
       with:
-        name: FunctionApp
-        path: ${{ github.workspace }}/FunctionApp
+        name: PlaywrightTest
+        path: ${{ github.workspace }}/PlaywrightTest
 
     - name: Upload Infrastucture Files
       if: ${{ github.event_name != 'pull_request' }}
@@ -167,8 +167,8 @@ jobs:
       uses: actions/download-artifact@v3
       continue-on-error: false
       with:
-        name: FunctionApp
-        path: ${{ github.workspace }}/FunctionApp
+        name: PlaywrightTest
+        path: ${{ github.workspace }}/PlaywrightTest
 
     # Deploy Function Application
     - name: 'Deploy Function Application'
@@ -176,7 +176,7 @@ jobs:
       with:
         app-name: ${{ needs.deploy_infrastructure.outputs.output_functionAppName }}
         slot-name: 'production'
-        package: './FunctionApp'
+        package: './PlaywrightTest'
         
 #    - name: 'Deploy to Azure WebApp'
 #      id: deploy-to-webapp 
