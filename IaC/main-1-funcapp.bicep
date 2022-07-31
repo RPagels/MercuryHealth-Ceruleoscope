@@ -8,8 +8,8 @@ param appInsightsConnectionString string
 param defaultTags object
 
 //param ftpsState string = 'FtpsOnly'
-param linuxFxVersion string = 'php|7.4' //'NODE|10.15'
-param sku string = 'S1'
+param linuxFxVersion string = 'NODE|16' // 'php|7.4'
+param sku string = 'B1'
 //param skuCode string = 'Y1'
 param functionRuntime string = 'node'
 param functionExtensionVersion string = '~4'
