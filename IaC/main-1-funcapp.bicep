@@ -8,8 +8,8 @@ param appInsightsConnectionString string
 param defaultTags object
 
 //param ftpsState string = 'FtpsOnly'
-param linuxFxVersion string = 'NODE|10.15'
-param sku string = 'F1'
+param linuxFxVersion string = 'php|7.4' //'NODE|10.15'
+param sku string = 'S1'
 //param skuCode string = 'Y1'
 param functionRuntime string = 'node'
 param functionExtensionVersion string = '~4'
@@ -22,41 +22,43 @@ param functionExtensionVersion string = '~4'
 //var appInsightsName = '${appNamePrefix}-appinsights'
 
 // remove dashes for storage account name
-var storageAccountName = 'sta${uniqueString(resourceGroup().id)}'
+// var storageAccountName = 'sta${uniqueString(resourceGroup().id)}'
 
-// Storage Account
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
-  name: storageAccountName
-  location: location
-  sku: {
-    name: 'Standard_LRS'
-  }
-  tags: {}
-  kind: 'StorageV2'
-  properties: {
-    supportsHttpsTrafficOnly: true
-    allowBlobPublicAccess: false
-    accessTier: 'Hot'
-    minimumTlsVersion: 'TLS1_2'
-  }
-}
+// // Storage Account
+// resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
+//   name: storageAccountName
+//   location: location
+//   sku: {
+//     name: 'Standard_LRS'
+//   }
+//   tags: {}
+//   kind: 'StorageV2'
+//   properties: {
+//     supportsHttpsTrafficOnly: true
+//     allowBlobPublicAccess: false
+//     accessTier: 'Hot'
+//     minimumTlsVersion: 'TLS1_2'
+//   }
+// }
 
 // App Service
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: functionAppServicePlanName
   location: location
-  kind: 'linux'
   tags: defaultTags
   sku: {
     name: sku
-    // family: 'Y'
-    // capacity: 0
+  }
+  kind: 'linux'
+  properties: {
+    reserved: true
   }
 }
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: functionAppName
   location: location
+  kind: 'app'
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
