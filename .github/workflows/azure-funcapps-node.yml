@@ -108,12 +108,12 @@ jobs:
         name: IaC
         path: ${{ github.workspace }}/IaC
 
-    - name: Install Bicep
-      run: |
-        curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
-        chmod +x ./bicep
-        sudo mv ./bicep /usr/local/bin/bicep
-        bicep --version
+    # - name: Install Bicep
+    #   run: |
+    #     curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+    #     chmod +x ./bicep
+    #     sudo mv ./bicep /usr/local/bin/bicep
+    #     bicep --version
 
     - name: Deploy Infrastructure
       id: Infra

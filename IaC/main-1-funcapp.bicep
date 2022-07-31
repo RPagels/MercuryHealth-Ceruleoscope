@@ -22,24 +22,24 @@ param functionExtensionVersion string = '~4'
 //var appInsightsName = '${appNamePrefix}-appinsights'
 
 // remove dashes for storage account name
-// var storageAccountName = 'sta${uniqueString(resourceGroup().id)}'
+var storageAccountName = 'sta${uniqueString(resourceGroup().id)}'
 
-// // Storage Account
-// resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
-//   name: storageAccountName
-//   location: location
-//   sku: {
-//     name: 'Standard_LRS'
-//   }
-//   tags: {}
-//   kind: 'StorageV2'
-//   properties: {
-//     supportsHttpsTrafficOnly: true
-//     allowBlobPublicAccess: false
-//     accessTier: 'Hot'
-//     minimumTlsVersion: 'TLS1_2'
-//   }
-// }
+// Storage Account
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
+  name: storageAccountName
+  location: location
+  sku: {
+    name: 'Standard_LRS'
+  }
+  tags: {}
+  kind: 'StorageV2'
+  properties: {
+    supportsHttpsTrafficOnly: true
+    allowBlobPublicAccess: false
+    accessTier: 'Hot'
+    minimumTlsVersion: 'TLS1_2'
+  }
+}
 
 // App Service
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
@@ -55,16 +55,57 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   }
 }
 
+// This works great!!!
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: functionAppName
   location: location
-  kind: 'app'
-  properties: {
-    serverFarmId: appServicePlan.id
-    siteConfig: {
-      linuxFxVersion: linuxFxVersion
-    }
+  tags: defaultTags
+  kind: 'functionapp'
+  identity: {
+    type: 'SystemAssigned'
   }
+  properties: {
+    httpsOnly: true
+    serverFarmId: appServicePlan.id
+    clientAffinityEnabled: true
+    reserved: true
+    siteConfig: {
+      alwaysOn: true
+      linuxFxVersion: linuxFxVersion
+      appSettings: [
+        {
+          name: 'PLAYWRIGHT_BROWSERS_PATH'
+          value: 'home/site/wwwroot/node_modules/playwright-chromium/.local-browsers/'
+        }
+        {
+          name: 'AzureWebJobsStorage'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
+        }
+        {
+          name: 'WebsiteContentAzureFileConnectionString'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
+        }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsInstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsConnectionString //'InstrumentationKey=${appInsightsInstrumentationKey}'
+        }
+        {
+          name: 'FUNCTIONS_WORKER_RUNTIME'
+          value: functionRuntime
+        }
+        {
+          name: 'FUNCTIONS_EXTENSION_VERSION'
+          value: functionExtensionVersion
+        }        
+      ]
+    }
+    
+  }
+  
 }
 
 // // Function App
