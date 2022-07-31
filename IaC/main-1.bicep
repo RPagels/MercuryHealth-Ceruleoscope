@@ -9,7 +9,7 @@ param costCenter string = '74f644d3e665'
 // https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations
 var appInsightsName = 'appi-${uniqueString(resourceGroup().id)}'
 var appInsightsWorkspaceName = 'appw-${uniqueString(resourceGroup().id)}'
-var functionAppName = 'func-${uniqueString(resourceGroup().id)}'
+var functionAppName = 'funcLinux-${uniqueString(resourceGroup().id)}'
 var functionAppServicePlanName = 'funcplanLinux-${uniqueString(resourceGroup().id)}'
 var appInsightsAlertName = 'ResponseTime-${uniqueString(resourceGroup().id)}'
 
