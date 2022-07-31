@@ -12,7 +12,7 @@ param linuxFxVersion string = 'NODE|16' // 'php|7.4'
 param sku string = 'B1'
 //param skuCode string = 'Y1'
 param functionRuntime string = 'node'
-param functionExtensionVersion string = '~4'
+param functionExtensionVersion string = '~3'
 
 // remove dashes for storage account name
 var storageAccountName = 'sta${uniqueString(resourceGroup().id)}'
