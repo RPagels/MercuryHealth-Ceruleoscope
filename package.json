@@ -8,10 +8,10 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@playwright/test": "^1.19.1",
-    "ceruleoscope": "0.1.3",
-    "playwright": "^1.19.1",
-    "playwright-chromium": "^1.19.1"
+    "@playwright/test": "^1.24.2",
+    "ceruleoscope": "^0.1.3",
+    "playwright": "^1.24.2",
+    "playwright-chromium": "^1.24.2"
   },
   "devDependencies": {}
 }
