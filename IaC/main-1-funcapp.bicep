@@ -93,7 +93,15 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
           value: functionExtensionVersion
-        }        
+        }
+        {
+          name: 'LOCATION'
+          value: 'us-va-ash-azr' // East US, https://docs.microsoft.com/en-us/azure/azure-monitor/app/monitor-web-app-availability
+        }  
+        {
+          name: 'TESTNAME'
+          value: 'Playwright Tests'
+        }  
       ]
     }
     
