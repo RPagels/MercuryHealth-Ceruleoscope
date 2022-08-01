@@ -181,6 +181,7 @@ jobs:
         app-name: ${{ needs.deploy_infrastructure.outputs.output_functionAppName }}
         #slot-name: 'production'
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
         
 #    - name: 'Deploy to Azure WebApp'
 #      id: deploy-to-webapp 
