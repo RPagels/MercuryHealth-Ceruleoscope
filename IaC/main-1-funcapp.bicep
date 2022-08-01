@@ -12,7 +12,7 @@ param linuxFxVersion string = 'NODE|16' // 'php|7.4'
 param sku string = 'S1'
 //param skuCode string = 'Y1'
 param functionRuntime string = 'node'
-param functionExtensionVersion string = '~3'
+param functionExtensionVersion string = '~4'
 
 // remove dashes for storage account name
 var storageAccountName = 'sta${uniqueString(resourceGroup().id)}'
@@ -54,9 +54,9 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   location: location
   tags: defaultTags
   kind: 'functionapp'
-  // identity: {
-  //   type: 'SystemAssigned'
-  // }
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     httpsOnly: true
     serverFarmId: appServicePlan.id
